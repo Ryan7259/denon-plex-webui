@@ -1,0 +1,24 @@
+.alert {
+    position: absolute;
+    left: 40%;
+    border-radius: 3px;
+    border: 2px solid #f5c6cb;
+    padding: 15px;
+    margin: 5px;
+    width: fit-content;
+    transition: all 250ms ease-in-out 0s;
+    font-weight: 500;
+    font-size: x-large;
+    color: #721c24;
+    background-color: #f8d7da;
+}
+
+.alert-show {
+    opacity: 1;
+    transition: opacity 250ms ease-in-out 0s;
+}
+
+.alert-hide {
+    opacity: 0;
+    transition: opacity 250ms ease-in-out 3s;
+}

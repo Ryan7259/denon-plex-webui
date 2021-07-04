@@ -1,0 +1,163 @@
+.main {
+    display: grid;
+    grid-template-rows: auto auto minmax(0, 1fr);
+    grid-template-columns: auto minmax(0, 1fr);
+    overflow: hidden;
+    height: 100vh;
+}
+
+.title {
+    grid-row: 1 / 2;
+    grid-column: 1 / 2;
+    padding: 10px;
+}
+
+.tabs {
+    grid-row: 2 / 3;
+    grid-column: 1 / 3;
+    padding-left: 10px;
+}
+
+.tab-content {
+    display: grid;
+    grid-row: 3 / 4;
+    grid-column: 1 / 3;
+}
+
+.tab-content>.active.c
+{
+    display: grid;
+    overflow: hidden;
+}
+.cMain {
+    display: grid;
+    grid-template-rows: auto minmax(0, 1fr);
+    grid-template-columns: 100px 1fr 100px;
+    margin: 10px 10px 50px 10px;
+    gap: 1px;
+    min-height: 0;
+}
+
+.searchPage {
+    grid-column: 2 / 3;
+    grid-row: 1 / 2;
+}
+
+.connectionPrompt {
+    display: grid;
+    grid-column: 2 / 3;
+    grid-row: 1 / 2;
+    grid-template-rows: auto auto minmax(0, 1fr);
+    min-height: 0;
+}
+.connectedPrompt {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    grid-column: 2 / 3;
+    grid-row: 1 / 2;
+}
+.containers {
+    display: grid;
+    grid-column: 2 / 3;
+    grid-row: 2 / 3;
+    grid-template-rows: auto 1fr;
+    grid-template-columns: auto 1fr;
+}
+.backButton {
+    grid-row: 1 / 2;
+    grid-column: 1 / 2;
+}
+.containersList {
+    grid-row: 2 / 3;
+    grid-column: 2 / 3;
+    overflow: auto;
+    min-height: 0;
+    height: auto;
+}
+
+.playableContainer {
+    display: grid;
+    grid-row: 2 / 3;
+    grid-column: 2 / 3;
+    grid-template-rows: auto auto minmax(0, 1fr);
+    grid-template-columns: auto auto;
+    min-height: 0;
+}
+.playableItemsList {
+    grid-column: 1 / 3;
+    grid-row: 3 / 4;
+    overflow: auto;
+    min-height: 0;
+    height: auto;
+}
+.playableItem {
+    display: grid;
+    margin: 2px 0px 2px 0px;
+}
+
+.tab-content>.active.q
+{
+    display: grid;
+    overflow: hidden;
+}
+.qMain {
+    display: grid;
+    grid-template-rows: 50px 1fr 81px 175px;
+    grid-template-columns: 256px auto;
+    margin: 10px;
+    gap: 1px;
+    min-height: 0;
+}
+.mediaQueue {
+    display: flex;
+    flex-direction: column;
+    grid-row: 1 / 4;
+    grid-column: 2 / 3;
+    position: relative;
+
+    border: 0.5px solid rgba(0,0,0,0.5);
+    border-radius: 4px;
+    overflow: auto;
+}
+
+.delete-collapse.collapsing {
+    position: absolute;
+    right: 15px;
+    top: 65px;
+}
+.delete-collapse.collapse.show {
+    position: absolute;
+    right: 15px;
+    top: 65px;
+}
+
+.playlist-input-collapse.collapsing {
+    display: flex;
+    position: absolute;
+    right: 140px;
+    top: 110px;
+    z-index: 1;
+}
+.playlist-input-collapse.show {
+    display: flex;
+    position: absolute;
+    right: 140px;
+    top: 110px;
+    z-index: 1;
+}
+
+.savedPlaylists {
+    border: 0.5px solid rgba(0,0,0,0.5);
+    border-radius: 4px;
+    grid-column: 1 / 2;
+    grid-row: 1 / 3;
+    overflow: auto;
+}
+
+.tab-content>.active.s .settings
+{
+    display: grid;
+    grid-template-columns: 200px 250px 75px;
+    column-gap: 5px;
+    margin: 25px;
+}

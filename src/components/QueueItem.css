@@ -1,0 +1,13 @@
+.queueItemWrapper {
+    display: grid;
+    grid-template-columns: minmax(150px, 350px) minmax(325px, 500px);
+    column-gap: 20px;
+}
+.queueItemWrapper svg {
+    align-self: center;
+    height: 25px;
+    width: 25px;
+    stroke: black;
+    stroke-width: 0.5px;
+    fill: rgb(210, 210, 210);
+}
