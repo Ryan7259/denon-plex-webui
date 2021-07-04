@@ -2,7 +2,7 @@
 
 This is a React and express.js server app that acts as an intuitive UI to browse for local Plex music and stream it to a HEOS device like a Denon AV receiver/player. The React app uses the express server to send and receive JSON requests formatted to the HEOS CLI protocol.
 
-This is only a localhost app that can be started by clicking the startAppAndServer.bat file.
+This is only a Node.js localhost app that can be started by npm install + clicking the startAppAndServer.bat file.
 
 ## Features:
 - Searching and connecting to a HEOS device
