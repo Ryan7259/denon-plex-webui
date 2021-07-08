@@ -532,20 +532,23 @@ const Playbar = () => {
     const getAlbumArt = async () => {
         if ( info.pid && info.plexIp )
         {
-            const imgSrcRes = await findImg(currentItem.album, info.plexIp)
-            //console.log('imgSrcRes:', imgSrcRes)
-            if ( imgSrcRes && !imgSrcRes.error )
+            const findImgRes = await findImg(currentItem.album, info.plexIp)
+            //console.log('findImgRes:', findImgRes)
+            if ( findImgRes && !findImgRes.error )
             {
                 //console.log('album art retrieved, memoizing and setting')
                 setAlbumArt({
                     ...albumArt,
-                    [currentItem.album]: imgSrcRes                   
+                    [currentItem.album]: findImgRes                  
                 })
+            }
+            else if ( findImgRes.error )
+            {
+                dispatch(setNotification(findImgRes.error))
             }
             else
             {
-                console.log('Failed to find album art, PLEX media server not available?')
-                dispatch(setNotification('Failed to find album art, PLEX media server not available?'))
+                dispatch('Failed to find album art!')
             }
         }
     }

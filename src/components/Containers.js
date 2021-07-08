@@ -44,7 +44,6 @@ const Containers = () => {
     else
     {
       const containerRes = await commandService.sendCommand(command)
-
       //console.log('containerRes:', containerRes)
 
       // decode any encoded strings in name
@@ -82,6 +81,14 @@ const Containers = () => {
             if ( findImgRes && !findImgRes.error )
             {
               playCont.image_url = findImgRes
+            }
+            else if ( findImgRes.error )
+            {
+              dispatch(setNotification(findImgRes.error))
+            }
+            else
+            {
+              dispatch('Failed to find album art!')
             }
           }
           setPlayableContainer(playCont)

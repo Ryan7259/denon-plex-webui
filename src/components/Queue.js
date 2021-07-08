@@ -69,9 +69,9 @@ const Queue = () => {
             dispatch(setPlayState(playerStates.playMode.playing))
 
             const playQueueRes = await commandService.sendCommand(`player/play_queue?pid=${pid}&qid=${index+1}`)
+            // console.log('playQueueRes:', playQueueRes)
             if ( playQueueRes )
             {
-                console.log('playQueueRes:', playQueueRes)
                 dispatch(setBlockEventUpdates(false))
             }
             

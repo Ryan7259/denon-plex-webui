@@ -72,7 +72,14 @@ const App = () => {
                         if ( newIps.length > 0 )
                         {
                             // include existing unique ips after removing all dupes from new ips found
-                            newIps = [...newIps, ...existingStoredIps]
+                            if ( existingStoredIps )
+                            {
+                                newIps = [...newIps, ...existingStoredIps]
+                            }
+                            else
+                            {
+                                newIps = [...newIps]
+                            }
                             console.log('replacing locStorage:', newIps)
                             localStorage.setItem('ipsFound', JSON.stringify(newIps));
                         }

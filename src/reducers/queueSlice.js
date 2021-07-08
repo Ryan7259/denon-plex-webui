@@ -30,6 +30,7 @@ const queueSlice = createSlice({
             }
             //console.log('new queue:', newQ)
             state.queue = newQ
+            state.countSoFar = 0
         },
         clearQueue: (state) => {
             state.queue = []

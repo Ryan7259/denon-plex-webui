@@ -17,19 +17,29 @@ const findImg = async (containerName, plexIp) => {
             //console.log('findImgRes:',  findImgRes.data.MediaContainer.Metadata[0].thumb)
             const thumbLink = findImgRes.data.MediaContainer.Metadata[0].thumb
             //console.log(`${plexIp}${thumbLink}`)
-            return Promise.resolve(`${plexIp}${thumbLink}`)
+            return `${plexIp}${thumbLink}`
         }
-        else
-        {
-            console.log('Failed to find image!')
-            console.log('containerName:', containerName)
-            console.log('encodedContentName:', encodedContentName)
-        }
+
+        console.log(
+            {
+                error: {
+                    message: 'Failed getting album art!',
+                    containerName,
+                    encodedContentName
+                }
+            }
+        )
     }
     catch(error)
     {
-        console.log('Error finding image:', error)
-        return Promise.reject({error})
+        if ( error.response.status === 401 )
+        {
+            return {error: 'Failed getting album art! Your IP needs to be allowed without auth on the Plex Media Server.'}
+        }
+        else
+        {
+            return {error: 'Failed getting album art! Plex Media Server may be down.'}
+        }
     }
   }
 

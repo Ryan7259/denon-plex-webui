@@ -1,12 +1,15 @@
 .alert {
-    position: absolute;
-    left: 40%;
+    display: flex;
+    align-items: center;
+    justify-self: center;
+    margin-top: 5px;
+    width: max-content;
+    height: 75px;
+    transition: all 250ms ease-in-out 0s;
+
     border-radius: 3px;
     border: 2px solid #f5c6cb;
-    padding: 15px;
-    margin: 5px;
-    width: fit-content;
-    transition: all 250ms ease-in-out 0s;
+
     font-weight: 500;
     font-size: x-large;
     color: #721c24;

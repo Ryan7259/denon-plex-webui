@@ -59,7 +59,7 @@ const SavedPlaylists = () =>
         const getPlaylists = async () => {
             console.log('Getting existing playlists...')
             const playlistRes = await commandService.sendCommand(`browse/browse?sid=${sourceIdTypes.playlists}`)
-            console.log('playlistRes:', playlistRes)
+            //console.log('playlistRes:', playlistRes)
             if ( playlistRes )
             {
                 dispatch(setPlaylists(playlistRes.data.payload))
@@ -90,16 +90,20 @@ const SavedPlaylists = () =>
         if ( pid )
         {
             dispatch(setBlockEventUpdates(true))
+
             let newPlaylists = [...playlists]
             const idx = newPlaylists.findIndex(p => p.cid === playlistToEdit.cid)
             newPlaylists.splice(idx, 1, {...newPlaylists[idx], name: newName})
+
             dispatch(setPlaylists(newPlaylists))
+            
             //browse/rename_playlist?sid=source_id&cid=contaiiner_id&name=playlist_name
             const renamePlaylistRes = await commandService.sendCommand(`browse/rename_playlist?sid=${sourceIdTypes.playlists}&cid=${playlistToEdit.cid}&name=${newName}`)
             if ( renamePlaylistRes )
             {
                 dispatch(setBlockEventUpdates(false))
             }
+            
             setShowRename(false)
             setPlaylistToEdit(null)
             setNewName('')
@@ -110,7 +114,8 @@ const SavedPlaylists = () =>
         {
             dispatch(setBlockEventUpdates(true))
             dispatch(setPlaylists(playlists.filter(p => p.cid !== playlistToEdit.cid )))
-             // browse/delete_playlist?sid=source_id&cid=contaiiner_id
+
+            // browse/delete_playlist?sid=source_id&cid=contaiiner_id
             const deletePlaylistRes = await commandService.sendCommand(`browse/delete_playlist?sid=${sourceIdTypes.playlists}&cid=${playlistToEdit.cid}`)
             if ( deletePlaylistRes )
             {
