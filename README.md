@@ -13,4 +13,8 @@ This is only a Node.js localhost app that can be started by npm install + clicki
 
 
 ## Extras:
-- To see Plex album art, the user must set a plex server IP and add the app computer's IP to the allowed without auth list in Plex Media Server settings (otherwise, it would require a Plex token or an external metadata service)
+- To see Plex album art, the user must set a plex server IP and add the app computer's IP to the allowed without auth list in Plex Media Server settings (Otherwise, it would require a Plex token or using an external metadata service)
+
+## Images:
+<img src="https://github.com/Ryan7259/denon-plex-webui/blob/main/pic1.png?raw=true">
+<img src="https://github.com/Ryan7259/denon-plex-webui/blob/main/pic2.png?raw=true">
