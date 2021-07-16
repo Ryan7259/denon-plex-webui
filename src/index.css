@@ -123,26 +123,26 @@
 .delete-collapse.collapsing {
     position: absolute;
     right: 15px;
-    top: 65px;
+    top: 95px;
 }
 .delete-collapse.collapse.show {
     position: absolute;
     right: 15px;
-    top: 65px;
+    top: 95px;
 }
 
 .playlist-input-collapse.collapsing {
     display: flex;
     position: absolute;
     right: 140px;
-    top: 110px;
+    top: 140px;
     z-index: 1;
 }
 .playlist-input-collapse.show {
     display: flex;
     position: absolute;
     right: 140px;
-    top: 110px;
+    top: 140px;
     z-index: 1;
 }
 
