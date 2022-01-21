@@ -6,7 +6,7 @@ import { clearInfo, setPid} from '../reducers/infoSlice'
 import { setNotification } from '../reducers/notificationSlice'
 import { useSelector, useDispatch } from 'react-redux'
 
-const Connection = ({ ips, handleSearch }) => {
+const Connection = ({ ips, handleSearch, clearSearchHistory }) => {
     const [ connectedAddress, setConnectedAddress ] = useState('')
     const [ isConnected, setConnected ] = useState(false)
 
@@ -71,15 +71,24 @@ const Connection = ({ ips, handleSearch }) => {
     ?
     (
         <div className='connectionPrompt'>
-            <h3>Connect to a device</h3>
+            <h3 style={{gridColumn: '1/3'}}>Connect to a device</h3>
             <Button 
-                style={{marginBottom: '10px'}} 
+                style={{gridColumn: '1/2', marginRight: '5px', marginBottom: '10px'}} 
                 size="lg" 
                 onClick={handleSearch}
             >
                 Re-scan for Denon devices
             </Button>
+            <Button 
+                style={{gridColumn: '2/3', marginBottom: '10px'}}
+                variant="secondary" 
+                size="lg" 
+                onClick={clearSearchHistory}
+            >
+                Clear search history
+            </Button>
             <div style={{
+                gridColumn: '1/3',
                 gridRow: '3',
                 overflow: 'auto',
                 height: 'auto'

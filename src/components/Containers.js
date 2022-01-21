@@ -39,7 +39,7 @@ const Containers = () => {
       }
 
       setPrevCmds(prevStateCmds => prevStateCmds.concat(command))
-      return
+      return true
     }
     else
     {
@@ -63,7 +63,7 @@ const Containers = () => {
       {
         console.log('fail result:', heosObj.message)
         dispatch(setNotification('Command sent was invalid...'))
-        return
+        return false
       }
       
       // check if no containers found
@@ -88,7 +88,7 @@ const Containers = () => {
             }
             else
             {
-              dispatch('Failed to find album art!')
+              dispatch(setNotification('Failed to find album art!'))
             }
           }
           setPlayableContainer(playCont)
@@ -101,11 +101,13 @@ const Containers = () => {
         
         setPrevCmds(prevStateCmds => prevStateCmds.concat(command))
         setMemoMap(prevMemoMap => new Map(prevMemoMap.set(command, payloadObj)))
+        return true
       }
       // else, go back to last found group of containers
       else
       {
         dispatch(setNotification('No results found...'))
+        return false
       }
     }
   }
@@ -144,13 +146,13 @@ const Containers = () => {
     {
       // determine if container exists and is playable
       //console.log('playable container clicked:', container.playable === 'yes')
-      handleBrowse(`browse/browse?sid=${info.sid}&cid=${cid}`, (container && container.playable === 'yes') ? container : null) 
+      return await handleBrowse(`browse/browse?sid=${info.sid}&cid=${cid}`, (container && container.playable === 'yes') ? container : null) 
     }
     // still not at container level
     else if (sid)
     {
       dispatch(setSid(sid))
-      handleBrowse(`browse/browse?sid=${sid}`)
+      return await handleBrowse(`browse/browse?sid=${sid}`)
     }
   }
 

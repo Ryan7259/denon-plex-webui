@@ -123,10 +123,14 @@ const App = () => {
         }, 1000)
     }
 
+    const clearSearchHistory = () => {
+        setIps([])
+    }
+
     const buildPage = () => {
         return (!isSearching && ips.length > 0) 
         ?
-            <Connection ips={ips} handleSearch={handleSearch}/>
+            <Connection ips={ips} handleSearch={handleSearch} clearSearchHistory={clearSearchHistory}/>
         :
             <div className='searchPage'>
                 <Button 

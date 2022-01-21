@@ -10,7 +10,7 @@ const StyledContainerDiv = styled.div`
 
 const Container = ({ item, handleContainerCmds }) => {
     const [ showSpinner, setShowSpinner ] = useState(false)
-    const handleContainerClick = () => {
+    const handleContainerClick = async () => {
         setShowSpinner(true)
 
         // at playable container level
@@ -21,7 +21,10 @@ const Container = ({ item, handleContainerCmds }) => {
         // at unplayable container level
         else if (item.container === 'yes')
         {   
-            handleContainerCmds(null, item.cid)
+            if ( !(await handleContainerCmds(null, item.cid)) )
+            {
+                setShowSpinner(false)
+            }
         }
         // at source container level
         else
