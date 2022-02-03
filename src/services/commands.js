@@ -1,12 +1,14 @@
-import axios from 'axios'
+//import axios from 'axios'
+//axios.defaults.baseURL = 'http://localhost:3001';
 import playerStates from '../utils/playerStates'
+import { sendIPC } from '../client-ipc'
 
 const grabIPs = async () => {
     try
     {
-        const grabIPsRes = await axios.get('/api/grabIPs')
-        //console.log('grabIPsRes:', grabIPsRes)
-
+        //const grabIPsRes = await axios.get('/api/grabIPs')
+        const grabIPsRes = await sendIPC('grabIPs')
+        console.log('grabIPsRes:', grabIPsRes)
         if ( grabIPsRes )
         {
             return grabIPsRes
@@ -21,9 +23,9 @@ const grabIPs = async () => {
 const searchForIPs = async () => {
     try
     {
-        const searchForIPsRes = await axios.get('/api/searchIPs')
-        //console.log('commands.js searchForIPsRes:', searchForIPsRes)
-
+        //const searchForIPsRes = await axios.get('/api/searchIPs')
+        const searchForIPsRes = await sendIPC('searchForIPs')
+        console.log('commands.js searchForIPsRes:', searchForIPsRes)
         if ( searchForIPsRes )
         {
             return searchForIPsRes
@@ -42,11 +44,9 @@ const sendCommand = async (command) => {
     */
     try 
     {
-        const sendCmdRes = await axios.post('/api/send', {
-            cmd: command,
-        })
-        //console.log('commands.js sendCmdRes:', sendCmdRes)
-        if ( sendCmdRes && sendCmdRes.data.heos.result === 'success' )
+        const sendCmdRes = await sendIPC('sendCmd', command)
+        console.log('commands.js sendCmdRes:', sendCmdRes)
+        if ( sendCmdRes && sendCmdRes.heos.result === 'success' )
         {
             return sendCmdRes
         }
@@ -60,8 +60,7 @@ const sendCommand = async (command) => {
 const connectToIp = async (address) => {
     try 
     {
-        const conRes = await axios.get(`/api/connect/${address}`)
-
+        const conRes = await sendIPC('connectToIp', address)
         //console.log(`commands.js connected to ${address}`)
         //console.log('commands.js connectToIp conRes:', conRes)
         if ( conRes )
@@ -77,7 +76,7 @@ const connectToIp = async (address) => {
 const disconnectFromIp = async () => {
     try 
     {
-        const disConRes = await axios.get('/api/disconnect')
+        const disConRes = await sendIPC('disconnectFromIp')
         console.log('commands.js disConRes:', disConRes)
 
         if ( disConRes )
@@ -98,10 +97,10 @@ const getCurrentMedia = async (pid) => {
         // check if we have a payload(atleast one song in existing player queue) and if it's a type song
         // type station is not supported
         // otherwise, leave currentItem empty
-        if ( currMediaRes && Object.keys(currMediaRes.data.payload).length > 0 
-        && currMediaRes.data.payload.type && currMediaRes.data.payload.type === 'song' )
+        if ( currMediaRes && Object.keys(currMediaRes.payload).length > 0 
+        && currMediaRes.payload.type && currMediaRes.payload.type === 'song' )
         {
-            //console.log('Setting new curr. playing media:', currMediaRes.data.payload)
+            //console.log('Setting new curr. playing media:', currMediaRes.payload)
             //console.log('Replacing this non-dupe:', currentItem)
             return currMediaRes
         }
@@ -120,7 +119,7 @@ const getVolume = async (pid) => {
         if ( playerVolRes )
         {
             // vol level returned in a message string as a url parameter, so remove rest of str and parse as int
-            const volMatch = playerVolRes.data.heos.message.match(/(?<=.*level=)\d{1,3}/)
+            const volMatch = playerVolRes.heos.message.match(/(?<=.*level=)\d{1,3}/)
             if ( volMatch )
             {
                 const existingVolInt = parseInt(volMatch[0])
@@ -154,8 +153,8 @@ const getPlayMode = async (pid) => {
         //console.log('playModeRes:', playModeRes)
         if ( playModeRes )
         {
-            const repeatMatch = playModeRes.data.heos.message.match(/(?<=.*repeat=).*(?=&)/)
-            const shuffleMatch = playModeRes.data.heos.message.match(/(?<=.*shuffle=).*/)
+            const repeatMatch = playModeRes.heos.message.match(/(?<=.*repeat=).*(?=&)/)
+            const shuffleMatch = playModeRes.heos.message.match(/(?<=.*shuffle=).*/)
             if ( repeatMatch && shuffleMatch )
             {
                 const repeatStrVal = repeatMatch[0]
@@ -193,7 +192,7 @@ const getPlayState = async (pid) => {
         //console.log('playStateRes:', playStateRes)
         if ( playStateRes )
         {
-            const playStateMatch = playStateRes.data.heos.message.match(/(unknown|play|pause|stop)$/)
+            const playStateMatch = playStateRes.heos.message.match(/(unknown|play|pause|stop)$/)
             if ( playStateMatch )
             {
                 let playStateStrVal = playStateMatch[0]
@@ -234,7 +233,7 @@ const getQueue = async (pid) => {
         //console.log('getQueueRes:', getQueueRes)
         if ( getQueueRes )
         {
-           return getQueueRes.data.payload
+           return getQueueRes.payload
         }
     }
     catch(error)

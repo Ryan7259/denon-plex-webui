@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import { useState, useEffect } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { setPlaylists, clearPlaylists } from '../reducers/playlistsSlice'
 import commandService from '../services/commands'
@@ -62,7 +62,7 @@ const SavedPlaylists = () =>
             //console.log('playlistRes:', playlistRes)
             if ( playlistRes )
             {
-                dispatch(setPlaylists(playlistRes.data.payload))
+                dispatch(setPlaylists(playlistRes.payload))
             }
         }
 

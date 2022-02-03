@@ -1,22 +1,23 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 import Containers from './Containers'
 import commandService from '../services/commands'
 import { Button } from 'react-bootstrap'
-import { clearInfo, setPid} from '../reducers/infoSlice'
+import { clearInfo, setPid, setReadyForIPCEvents} from '../reducers/infoSlice'
 import { setNotification } from '../reducers/notificationSlice'
 import { useSelector, useDispatch } from 'react-redux'
+import { clearIPCEventHandler } from '../client-ipc'
 
 const Connection = ({ ips, handleSearch, clearSearchHistory }) => {
     const [ connectedAddress, setConnectedAddress ] = useState('')
     const [ isConnected, setConnected ] = useState(false)
 
     const dispatch = useDispatch()
-    const evtSource = useSelector(state => state.info.evtSource)
+    const readyForIPCEvents = useSelector(state => state.info.readyForIPCEvents)
 
     const handleConnect = async (address) => {
         const conRes = await commandService.connectToIp(address)
         //console.log('conRes:', conRes)
-        if ( conRes && conRes.data.success )
+        if ( conRes && conRes.success )
         {
             setConnectedAddress(address)
             setConnected(true)
@@ -25,15 +26,15 @@ const Connection = ({ ips, handleSearch, clearSearchHistory }) => {
             //console.log('getPlayersRes:', getPlayersRes)
             if ( getPlayersRes )
             {
-                const newPid = getPlayersRes.data.payload.find(players => players.ip === address).pid
+                const newPid = getPlayersRes.payload.find(players => players.ip === address).pid
                 dispatch(setPid(newPid))
             }
         }
         else
         {
-            if ( conRes && conRes.data )
+            if ( conRes )
             {
-                console.log('Connection.js handleConnect error:', conRes.data)
+                console.log('Connection.js handleConnect error:', conRes)
             }
             dispatch(setNotification('Failed to connect to player...'))
         }
@@ -45,13 +46,14 @@ const Connection = ({ ips, handleSearch, clearSearchHistory }) => {
             return
         }
 
-        if ( evtSource )
+        if ( readyForIPCEvents )
         {
-            evtSource.close()
+            clearIPCEventHandler()
+            dispatch(setReadyForIPCEvents(false))
             console.log('Ended SSE connection!')
         }
         const disConRes = await commandService.disconnectFromIp()
-        if ( disConRes && disConRes.data.success )
+        if ( disConRes )
         {
             setConnectedAddress('')
             setConnected(false)
@@ -60,9 +62,9 @@ const Connection = ({ ips, handleSearch, clearSearchHistory }) => {
         else
         {
             console.log('Failed to close connection to server and player...')
-            if ( disConRes && disConRes.data.error )
+            if ( disConRes )
             {
-                console.log('disconnect error:', disConRes.data.error)
+                console.log('disconnect error:', disConRes)
             }
         }
     }

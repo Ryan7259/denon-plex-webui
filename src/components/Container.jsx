@@ -1,11 +1,10 @@
-import React, { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Button, Spinner } from 'react-bootstrap'
 import styled from 'styled-components'
 
 const StyledContainerDiv = styled.div`
     display: grid;
     margin: 2px 0px 2px 0px;
-    opacity: ${props => props.showSpinner ? '0.5' : '1'};
 `
 
 const Container = ({ item, handleContainerCmds }) => {
@@ -21,7 +20,7 @@ const Container = ({ item, handleContainerCmds }) => {
         // at unplayable container level
         else if (item.container === 'yes')
         {   
-            if ( !(await handleContainerCmds(null, item.cid)) )
+            if (!(await handleContainerCmds(null, item.cid)))
             {
                 setShowSpinner(false)
             }
@@ -33,9 +32,15 @@ const Container = ({ item, handleContainerCmds }) => {
         }
     }
 
+    useEffect(() => {
+        return () => {
+            setShowSpinner(false)
+        }
+    }, [])
+
     return (
         <StyledContainerDiv showSpinner={showSpinner}>
-            <Button onClick={handleContainerClick}>{item.name}  {showSpinner ? <Spinner as="span" animation="border" size="sm"/> : null}</Button>
+            <Button onClick={handleContainerClick} disabled={showSpinner}>{item.name} {showSpinner ? <Spinner as="span" animation="border" size="sm"/> : null}</Button>
         </StyledContainerDiv>
     )
 }

@@ -1,4 +1,3 @@
-import React from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { resetGotNotification } from '../reducers/notificationSlice'
 import './Notification.css'

@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import { useState, useRef } from 'react'
 import { Button } from 'react-bootstrap'
 import Container from './Container'
 import PlayableContainer from './PlayableContainer'
@@ -44,51 +44,50 @@ const Containers = () => {
     else
     {
       const containerRes = await commandService.sendCommand(command)
-      //console.log('containerRes:', containerRes)
-
-      // decode any encoded strings in name
-      let payloadObj = containerRes.data.payload
-      for ( let obj of payloadObj )
-      {
-        if ( obj.name )
-        {
-          obj.name = decodeURIComponent(obj.name)
-        }
-      }
-      //console.log('payloadObj:', payloadObj)
-      const heosObj = containerRes.data.heos
+      //console.log('containerRes:', containerRes
 
       // failure result
-      if (heosObj.result === 'fail')
+      if (!containerRes || containerRes.heos.result === 'fail')
       {
-        console.log('fail result:', heosObj.message)
+        if ( containerRes )
+        {
+          console.log('fail result:', containerRes.heos.message)
+        }
         dispatch(setNotification('Command sent was invalid...'))
         return false
       }
-      
+
+      let payloadObj = containerRes.payload
+
       // check if no containers found
       if (payloadObj.length > 0)
       {
         //console.log('cmd to send to back line:', command)
-        //console.log('after payloadObj is set:', payloadObj)
+        // decode any encoded strings in name
+        for ( let obj of payloadObj )
+        {
+          if ( obj.name )
+          {
+            obj.name = decodeURIComponent(obj.name)
+          }
+        }
+
+        //console.log('payloadObj:', payloadObj)
 
         if (playCont)
         {
           //console.log('findImg name:', playCont.name)
-          if ( info.plexIp )
+          if ( info.clientIP )
           {
-            const findImgRes = await findImg(playCont.name, info.plexIp)
+            const findImgRes = await findImg(playCont.name, info.clientIP)
             if ( findImgRes && !findImgRes.error )
             {
               playCont.image_url = findImgRes
             }
-            else if ( findImgRes.error )
-            {
-              dispatch(setNotification(findImgRes.error))
-            }
             else
             {
-              dispatch(setNotification('Failed to find album art!'))
+              if ( findImgRes.error ) console.log('findImg error:', findImgRes.error)
+              dispatch(setNotification('Failed to get album art!'))
             }
           }
           setPlayableContainer(playCont)
@@ -139,21 +138,33 @@ const Containers = () => {
 
   // modifies command string to prepare next container to display based on if it is a playable/un-playable container
   // also prevents browsing media/playable container since that is deepest container level
+  const [handling, setHandling] = useState(false)
+  const handlingRef = useRef(handling)
+  handlingRef.current = handling
   const handleContainerCmds = async (sid, cid = null, container = null) => 
   {
+    if ( handlingRef.current )
+    {
+      console.log('Handling a browse, cannot handle another yet...')
+      return
+    }
+    setHandling(true)
+
     // at browseable container level
     if (cid) 
     {
       // determine if container exists and is playable
       //console.log('playable container clicked:', container.playable === 'yes')
-      return await handleBrowse(`browse/browse?sid=${info.sid}&cid=${cid}`, (container && container.playable === 'yes') ? container : null) 
+      await handleBrowse(`browse/browse?sid=${info.sid}&cid=${cid}`, (container && container.playable === 'yes') ? container : null) 
     }
     // still not at container level
     else if (sid)
     {
       dispatch(setSid(sid))
-      return await handleBrowse(`browse/browse?sid=${sid}`)
+      await handleBrowse(`browse/browse?sid=${sid}`)
     }
+
+    setHandling(false)
   }
 
   // determine if we display queueable media/container or more browsable containers

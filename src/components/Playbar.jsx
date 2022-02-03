@@ -1,8 +1,9 @@
-import React, { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useSelector, useDispatch, shallowEqual } from 'react-redux'
 import { setCurrentItem, setPlayState, setDuration, setBlockEventUpdates } from '../reducers/playerSlice'
 import { setQueue } from '../reducers/queueSlice'
-import { setEvtSource } from '../reducers/infoSlice'
+import { setReadyForIPCEvents } from '../reducers/infoSlice'
+import { setIPCEventHandler } from '../client-ipc'
 import commandService from '../services/commands'
 import findImg from '../utils/findImg'
 import playerStates from '../utils/playerStates'
@@ -10,6 +11,7 @@ import eventTypes from '../utils/eventTypes'
 import styled from 'styled-components';
 import { setNotification } from '../reducers/notificationSlice'
 import songEqual from '../utils/songEqual'
+import { Image } from 'react-bootstrap'
 
 const StyledPlayBar = styled.div`
     display: grid;
@@ -99,7 +101,7 @@ const StyledVolDiv = styled.div`
         transition: opacity 250ms ease-in-out 3s;
     }
 `
-const Playbar = () => {
+export const Playbar = () => {
     const [ volume, setVolume ] = useState({value: 0, x: 0})
     const [ showVolume, setShowVolume ] = useState(false)
     const [ repeatState, setRepeatState ] = useState(playerStates.repeatMode.repeatOff)
@@ -286,9 +288,9 @@ const Playbar = () => {
             const currMediaRes = await commandService.getCurrentMedia(info.pid)
             if ( currMediaRes )
             {
-                //console.log('Setting new curr. playing media:', currMediaRes.data.payload)
+                //console.log('Setting new curr. playing media:', currMediaRes.payload)
                 //console.log('Replacing this non-dupe:', currentItem)
-                dispatch(setCurrentItem(currMediaRes.data.payload))
+                dispatch(setCurrentItem(currMediaRes.payload))
             }
 
             // register for events after initialization
@@ -300,7 +302,7 @@ const Playbar = () => {
             }
 
             // once events are registered again, setup server side events for detecting changes in queue
-            dispatch(setEvtSource(new EventSource('http://localhost:3001/events')))
+            dispatch(setReadyForIPCEvents(true))
             console.log('Set up event source!')
         }
 
@@ -319,136 +321,145 @@ const Playbar = () => {
         }
     }, [info.pid])
 
-    useEffect(() => {
-        if ( info.evtSource && info.pid )
+
+
+    const eventHandler = async (e) => {
+        if ( blockRef.current )
         {
-            info.evtSource.onmessage = async (e) => {
-                if ( blockRef.current )
-                {
-                    //console.log('blockRef.current:', blockRef.current)
-                    return console.log('Blocked an event!')
-                }
-
-                const evtObj = JSON.parse(e.data).heos
-                //console.log('SSE recv\'d:', evtObj)
-                if ( evtObj.command === eventTypes.nowPlayingChanged )
-                {
-                    console.log('Now playing change event, getting new current media...')
-                    const currMediaRes = await commandService.getCurrentMedia(info.pid)
-                    if ( currMediaRes )
-                    {
-                        //console.log('Setting new curr. playing media:', currMediaRes.data.payload)
-                        //console.log('Replacing this non-dupe:', currentItem)
-                        dispatch(setCurrentItem(currMediaRes.data.payload))
-                    }
-                    else
-                    {
-                        dispatch(setNotification('Failed updating current media from event...'))
-                    }
-                }
-                else if ( evtObj.command === eventTypes.playerStateChanged )
-                {
-                    console.log('Playstate change event!')
-                    //"message": "pid=1933802518&state=stop"
-                    let playStateMatch = evtObj.message.match(/(unknown|play|pause|stop)$/)
-                    if ( playStateMatch )
-                    {
-                        if ( playStateMatch[0] === 'unknown' )
-                        {
-                            playStateMatch[0] = playerStates.playMode.stopped
-                        }
-
-                        console.log(`Changing to ${playStateMatch[0]} event state...`)
-
-                        if ( playStateMatch[0] === playerStates.playMode.stopped )
-                        {
-                            dispatch(setCurrentItem(null))
-                        }
-
-                        dispatch(setPlayState(playStateMatch[0]))
-                    }
-                    else
-                    {
-                        dispatch(setNotification('Failed updating playstate from event...'))
-                    }
-                }
-                else if ( evtObj.command === eventTypes.nowPlayingProgress )
-                {
-                    //console.log('duration:', evtObj.message)
-                    //"message": "pid=player_id&cur_pos=position_ms&duration=duration_ms"
-                    let progress = evtObj.message.match(/(?<=.*&cur_pos=)\d+/)
-                    let total = evtObj.message.match(/(?<=.*&duration=)\d+/)
-
-                    if ( progress && total )
-                    {
-                        progress = parseInt(progress[0])
-                        total = parseInt(total[0])
-                        //console.log('progress:', progress, '/', total) 
-                        dispatch(setDuration({progress, total}))
-                    }
-                    else
-                    {
-                        dispatch(setNotification('Failed updating progress from event...'))
-                    }
-                }
-                else if ( evtObj.command === eventTypes.volumeChanged )
-                {
-                    console.log('Vol. change event!')
-                    //pid='player_id'&level='vol_level'&mute='on_or_off'
-                    const volMatch = evtObj.message.match(/(?<=.*level=)\d{1,3}/)
-                    if ( volMatch )
-                    {
-                        const existingVolInt = parseInt(volMatch[0])
-                        setVolume({ 
-                            value: existingVolInt, 
-                            x: ((maxVolWidth*existingVolInt)/100.0)
-                        })
-                    }
-                    else
-                    {
-                        dispatch(setNotification('Failed updating volume from event...'))
-                    }
-
-                }
-                else if ( evtObj.command === eventTypes.repeatModeChanged || evtObj.command === eventTypes.shuffleModeChanged )
-                {
-                    console.log('Playmode change event!')
-                    const { repeatStrVal, shuffleStrVal } = await commandService.getPlayMode(info.pid)
-                    if ( repeatStrVal && shuffleStrVal )
-                    {
-                        setRepeatState(repeatStrVal)
-                        setShuffleState(shuffleStrVal)
-                    }
-                    else
-                    {
-                        dispatch(setNotification('Failed updating playmode from event...'))
-                    }
-                }
-                else if ( evtObj.command === eventTypes.queueChanged )
-                {
-                    console.log('Queue change event!')
-                    const newQueueItems = await commandService.getQueue(info.pid)
-                    //console.log('newQueueItems:', newQueueItems)
-                    if ( newQueueItems )
-                    {
-                        console.log('Setting queue items...', newQueueItems)
-                        dispatch(setQueue(newQueueItems))
-                    }
-                }
-                else if ( evtObj.command === eventTypes.sourcesChanged )
-                {
-                    //browse/get_music_sources
-                    //browse/get_source_info?sid=source_id
-                    const musicSourcesRes = await commandService.sendCommand(`browse/get_source_info?sid=${info.sid}`)
-                    console.log('musicSourcesRes:', musicSourcesRes)
-                }
-                else if ( evtObj.command === eventTypes.playbackError )
-                {
-                    dispatch(setNotification('Playblack error. Unable to play media.'))
-                }
-            } 
+            //console.log('blockRef.current:', blockRef.current)
+            console.log('Blocked an event!')
+            return
         }
-    }, [info.evtSource])
+        else if ( typeof e !== 'object' )
+        {
+            //console.log('Not a parseable event!', e)
+            return
+        }
+
+        //console.log('IPC event recv\'d:', e)
+        const evtObj = e.heos
+        if ( evtObj.command === eventTypes.nowPlayingChanged )
+        {
+            console.log('Now playing change event, getting new current media...')
+            const currMediaRes = await commandService.getCurrentMedia(info.pid)
+            if ( currMediaRes )
+            {
+                //console.log('Setting new curr. playing media:', currMediaRes.payload)
+                //console.log('Replacing this non-dupe:', currentItem)
+                dispatch(setCurrentItem(currMediaRes.payload))
+            }
+            else
+            {
+                dispatch(setNotification('Failed updating current media from event...'))
+            }
+        }
+        else if ( evtObj.command === eventTypes.playerStateChanged )
+        {
+            console.log('Playstate change event!')
+            //"message": "pid=1933802518&state=stop"
+            let playStateMatch = evtObj.message.match(/(unknown|play|pause|stop)$/)
+            if ( playStateMatch )
+            {
+                if ( playStateMatch[0] === 'unknown' )
+                {
+                    playStateMatch[0] = playerStates.playMode.stopped
+                }
+
+                console.log(`Changing to ${playStateMatch[0]} event state...`)
+
+                if ( playStateMatch[0] === playerStates.playMode.stopped )
+                {
+                    dispatch(setCurrentItem(null))
+                }
+
+                dispatch(setPlayState(playStateMatch[0]))
+            }
+            else
+            {
+                dispatch(setNotification('Failed updating playstate from event...'))
+            }
+        }
+        else if ( evtObj.command === eventTypes.nowPlayingProgress )
+        {
+            //console.log('duration:', evtObj.message)
+            //"message": "pid=player_id&cur_pos=position_ms&duration=duration_ms"
+            let progress = evtObj.message.match(/(?<=.*&cur_pos=)\d+/)
+            let total = evtObj.message.match(/(?<=.*&duration=)\d+/)
+
+            if ( progress && total )
+            {
+                progress = parseInt(progress[0])
+                total = parseInt(total[0])
+                //console.log('progress:', progress, '/', total) 
+                dispatch(setDuration({progress, total}))
+            }
+            else
+            {
+                dispatch(setNotification('Failed updating progress from event...'))
+            }
+        }
+        else if ( evtObj.command === eventTypes.volumeChanged )
+        {
+            console.log('Vol. change event!')
+            //pid='player_id'&level='vol_level'&mute='on_or_off'
+            const volMatch = evtObj.message.match(/(?<=.*level=)\d{1,3}/)
+            if ( volMatch )
+            {
+                const existingVolInt = parseInt(volMatch[0])
+                setVolume({ 
+                    value: existingVolInt, 
+                    x: ((maxVolWidth*existingVolInt)/100.0)
+                })
+            }
+            else
+            {
+                dispatch(setNotification('Failed updating volume from event...'))
+            }
+
+        }
+        else if ( evtObj.command === eventTypes.repeatModeChanged || evtObj.command === eventTypes.shuffleModeChanged )
+        {
+            console.log('Playmode change event!')
+            const { repeatStrVal, shuffleStrVal } = await commandService.getPlayMode(info.pid)
+            if ( repeatStrVal && shuffleStrVal )
+            {
+                setRepeatState(repeatStrVal)
+                setShuffleState(shuffleStrVal)
+            }
+            else
+            {
+                dispatch(setNotification('Failed updating playmode from event...'))
+            }
+        }
+        else if ( evtObj.command === eventTypes.queueChanged )
+        {
+            console.log('Queue change event!')
+            const newQueueItems = await commandService.getQueue(info.pid)
+            //console.log('newQueueItems:', newQueueItems)
+            if ( newQueueItems )
+            {
+                console.log('Setting queue items...', newQueueItems)
+                dispatch(setQueue(newQueueItems))
+            }
+        }
+        else if ( evtObj.command === eventTypes.sourcesChanged )
+        {
+            //browse/get_music_sources
+            //browse/get_source_info?sid=source_id
+            const musicSourcesRes = await commandService.sendCommand(`browse/get_source_info?sid=${info.sid}`)
+            console.log('musicSourcesRes:', musicSourcesRes)
+        }
+        else if ( evtObj.command === eventTypes.playbackError )
+        {
+            dispatch(setNotification('Playblack error. Unable to play media.'))
+        }
+    } 
+    useEffect(() => {
+        if ( info.readyForIPCEvents && info.pid )
+        {
+            setIPCEventHandler(eventHandler)
+        }            
+    }, [info.readyForIPCEvents])
 
     const startDrag = (e) => {
         // stop defaults, stop events from here
@@ -530,9 +541,9 @@ const Playbar = () => {
     const [ albumArt, setAlbumArt ] = useState({})
 
     const getAlbumArt = async () => {
-        if ( info.pid && info.plexIp )
+        if ( info.pid && info.clientIP )
         {
-            const findImgRes = await findImg(currentItem.album, info.plexIp)
+            const findImgRes = await findImg(currentItem.album, info.clientIP)
             //console.log('findImgRes:', findImgRes)
             if ( findImgRes && !findImgRes.error )
             {
@@ -568,12 +579,13 @@ const Playbar = () => {
             <StyledAlbumArtDiv>
                 {(currentItem && albumArt[currentItem.album])
                 ? 
-                <img 
+                <Image 
                     style={{
                         borderRadius: '4px',
                         paddingRight: '2px',
                         width: '256px',
                     }}
+                    fluid={true}
                     src={albumArt[currentItem.album]} 
                 /> 
                 : 
@@ -735,4 +747,3 @@ const Playbar = () => {
         </StyledPlayBar>
     )
 }
-export default Playbar

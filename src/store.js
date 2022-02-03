@@ -1,8 +1,8 @@
 import { createStore, combineReducers } from 'redux'
-import notificationSlice from './reducers/notificationSlice.js'
-import playlistsSlice from './reducers/playlistsSlice.js'
-import queueSlice from './reducers/queueSlice.js'
-import infoSlice from './reducers/infoSlice.js'
+import notificationSlice from './reducers/notificationSlice'
+import playlistsSlice from './reducers/playlistsSlice'
+import queueSlice from './reducers/queueSlice'
+import infoSlice from './reducers/infoSlice'
 import playerSlice from './reducers/playerSlice'
 
 const reducer = combineReducers({

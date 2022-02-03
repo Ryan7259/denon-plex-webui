@@ -1,9 +1,9 @@
-import React, { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { DragDropContext, Droppable } from 'react-beautiful-dnd'
 import { Button, Collapse } from 'react-bootstrap'
 
 import SavedPlaylists from './SavedPlaylists'
-import Playbar from './Playbar'
+import { Playbar } from './Playbar'
 import QueueItem from './QueueItem'
 import CurrentQueueItem from './CurrentQueueItem'
 
@@ -393,12 +393,6 @@ const Queue = () => {
         deselectAllQueueItems()
     }
 
-    // deselect all if not clicking anywhere
-    useEffect(() => {
-        document.addEventListener('click', onNonItemClick)
-        return () => document.removeEventListener('click', onNonItemClick)
-    }, [showPrompt, setShowPrompt])
-
     useEffect(() => {
         // if queue is added or removed from, queue mids (tied to draggableId) will change, make user re-select
         deselectAllQueueItems()
@@ -414,6 +408,12 @@ const Queue = () => {
     const showPromptRef = useRef(showPrompt)
     showPromptRef.current = showPrompt
 
+    // deselect all if not clicking anywhere
+    useEffect(() => {
+        document.addEventListener('click', onNonItemClick)
+        return () => document.removeEventListener('click', onNonItemClick)
+    }, [showPrompt, setShowPrompt])
+    
     const handleShowPrompt = e => {
         e.preventDefault()
         setShowPrompt(true)
@@ -437,7 +437,7 @@ const Queue = () => {
                 console.log('playlistRes:', playlistRes)
                 if ( playlistRes )
                 {
-                    dispatch(setPlaylists(playlistRes.data.payload))
+                    dispatch(setPlaylists(playlistRes.payload))
                     setShowPrompt(false)
                     setPlaylistName('')
                     dispatch(setBlockEventUpdates(false))

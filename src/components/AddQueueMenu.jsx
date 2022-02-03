@@ -1,4 +1,3 @@
-import React from 'react'
 import { Button } from 'react-bootstrap'
 import { useDispatch, useSelector } from 'react-redux'
 import { setQueue } from '../reducers/queueSlice'
@@ -14,6 +13,11 @@ const MenuButton = styled(Button)`
 const Menu = styled.div`
     display: grid;
     grid-template-rows: 1fr 1fr 1fr 1fr;
+    gap: 1px;
+`
+const ShortMenu = styled.div`
+    display: grid;
+    grid-template-rows: 1fr 1fr;
     gap: 1px;
 `
 
@@ -81,10 +85,10 @@ const AddQueueMenu = ({cid, content}) =>
         <MenuButton onClick={() => addMedia(4)} variant='secondary'>Play Now & Replace Queue</MenuButton>
     </Menu>
     :
-    <Menu>
+    <ShortMenu>
         <MenuButton onClick={() => addMedia(1)} variant='secondary'>Play Now</MenuButton>
         <MenuButton onClick={() => addMedia(3)} variant='secondary'>Add to End of Queue</MenuButton>
-    </Menu>
+    </ShortMenu>
 }
 
 export default AddQueueMenu

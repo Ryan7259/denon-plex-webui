@@ -1,4 +1,3 @@
-import React from 'react'
 import { Button } from 'react-bootstrap'
 import { useDispatch, useSelector } from 'react-redux'
 import sourceIdTypes from '../utils/sourceIdTypes'
@@ -17,6 +16,13 @@ const Menu = styled.div`
     grid-template-rows: 1fr 1fr 1fr 1fr;
     gap: 1px;
 `
+
+const ShortMenu = styled.div`
+    display: grid;
+    grid-template-rows: 1fr 1fr;
+    gap: 1px;
+`
+
 const AddPlaylistItemsMenu = ({cid}) => {
     const { queue } = useSelector(state => state.queue)
     const pid = useSelector(state => state.info.pid)
@@ -86,10 +92,10 @@ const AddPlaylistItemsMenu = ({cid}) => {
         <MenuButton onClick={() => addPlaylistMedia(4)} variant='secondary'>Play Now & Replace Queue</MenuButton>
     </Menu>
     :
-    <Menu>
+    <ShortMenu>
         <MenuButton onClick={() => addPlaylistMedia(1)} variant='secondary'>Play Now</MenuButton>
         <MenuButton onClick={() => addPlaylistMedia(3)} variant='secondary'>Add to End of Queue</MenuButton>
-    </Menu>
+    </ShortMenu>
 }
 
 export default AddPlaylistItemsMenu

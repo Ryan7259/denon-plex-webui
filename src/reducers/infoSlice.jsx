@@ -9,8 +9,8 @@ export const infoSlice = createSlice({
     initialState: {
         pid: null, 
         sid: null, 
-        plexIp: null,
-        evtSource: null,
+        clientIP: null,
+        readyForIPCEvents: null,
     },
     reducers: {
         setPid: (state, action) => {
@@ -19,22 +19,22 @@ export const infoSlice = createSlice({
         setSid: (state, action) => {
             state.sid = action.payload
         },
-        setPlexSeverIP: (state, action) =>
+        setClientIP: (state, action) =>
         {
-            state.plexIp = `http://${action.payload}`
+            state.clientIP = action.payload ? `http://${action.payload}` : ''
         },
-        setEvtSource: (state, action) => {
-            state.evtSource = action.payload
+        setReadyForIPCEvents: (state, action) => {
+            state.readyForIPCEvents = action.payload
         },
         // Don't want to reset settings or searched IPs, only connection state info
         clearInfo: (state) => {
             state.pid = null
             state.sid = null
-            state.evtSource = null
+            state.readyForIPCEvents = null
         }
     }
 })
 
-export const { setPid, setSid, setPlexSeverIP, setEvtSource, clearInfo } = infoSlice.actions
+export const { setPid, setSid, setClientIP, setReadyForIPCEvents, clearInfo } = infoSlice.actions
 
 export default infoSlice.reducer

@@ -1,4 +1,3 @@
-import React from 'react'
 import { Draggable } from 'react-beautiful-dnd'
 import { useSelector } from 'react-redux'
 import playerStates from '../utils/playerStates'

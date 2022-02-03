@@ -1,4 +1,3 @@
-import React from 'react'
 import { Draggable } from 'react-beautiful-dnd'
 import './QueueItem.css'
 import styled from 'styled-components'

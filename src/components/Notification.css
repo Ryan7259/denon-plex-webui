@@ -1,5 +1,7 @@
-.alert {
-    display: flex;
+div.alert {
+    position: absolute;
+    z-index: 1;
+
     align-items: center;
     justify-self: center;
     margin-top: 5px;
@@ -16,12 +18,12 @@
     background-color: #f8d7da;
 }
 
-.alert-show {
+div.alert-show {
     opacity: 1;
     transition: opacity 250ms ease-in-out 0s;
 }
 
-.alert-hide {
+div.alert-hide {
     opacity: 0;
     transition: opacity 250ms ease-in-out 3s;
 }

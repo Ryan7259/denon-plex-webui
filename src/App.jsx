@@ -1,12 +1,12 @@
-import React, { useState, useRef, useEffect } from 'react'
-import Connection from './components/Connection.js'
-import Queue from './components/Queue.js'
-import Settings from './components/Settings.js'
-import Notification from './components/Notification.js'
+import { useState, useRef, useEffect } from 'react'
+import Connection from './components/Connection'
+import Queue from './components/Queue'
+import Settings from './components/Settings'
+import Notification from './components/Notification'
 import { Spinner, Tabs, Tab, Button, Fade } from 'react-bootstrap'
 import { useDispatch } from 'react-redux'
-import { setNotification } from './reducers/notificationSlice.js'
-import commandService from './services/commands.js'
+import { setNotification } from './reducers/notificationSlice'
+import commandService from './services/commands'
 
 const App = () => {
     const [ips, setIps] = useState([])
@@ -26,11 +26,13 @@ const App = () => {
     ipsFoundRef.current = ips
 
     const handleSearch = async () => {
+        if (isSearching) return
+
         setSearching(true)
 
         const searchForIPsRes = await commandService.searchForIPs()
         //console.log('searchForIP App call res:', searchForIPsRes)
-        if ( !searchForIPsRes || !searchForIPsRes.data.success )
+        if ( !searchForIPsRes )
         {
             //console.log('Error in searching for ips...')
             dispatch(setNotification('Error in searching for ips...'))
@@ -88,7 +90,7 @@ const App = () => {
                 }, 3000)
             }
 
-            let ipsFound = (await commandService.grabIPs()).data
+            let ipsFound = await commandService.grabIPs()
             //console.log('grabIPs result ipsFound:', ipsFound)
             if ( ipsFound )
             {
@@ -125,6 +127,7 @@ const App = () => {
 
     const clearSearchHistory = () => {
         setIps([])
+        localStorage.clear();
     }
 
     const buildPage = () => {
@@ -137,7 +140,7 @@ const App = () => {
                     variant="primary" 
                     size="lg"
                     style={{width: '100%'}}  
-                    onClick={!isSearching ? handleSearch : null}
+                    onClick={handleSearch}
                     disabled={isSearching}
                 >
                     {isSearching ? 
@@ -162,7 +165,6 @@ const App = () => {
     return (
             <div className='main'>
                 <Notification />
-                <h2 className='title'>Denon-Plex-WebUI</h2>
                 <Tabs className='tabs' defaultActiveKey="queue">
                         <Tab className='c' eventKey="browse" title="Browse">
                             <div className='cMain'>
