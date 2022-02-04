@@ -1,14 +1,11 @@
-//import axios from 'axios'
-//axios.defaults.baseURL = 'http://localhost:3001';
 import playerStates from '../utils/playerStates'
 import { sendIPC } from '../client-ipc'
 
 const grabIPs = async () => {
     try
     {
-        //const grabIPsRes = await axios.get('/api/grabIPs')
         const grabIPsRes = await sendIPC('grabIPs')
-        console.log('grabIPsRes:', grabIPsRes)
+        //console.log('grabIPsRes:', grabIPsRes)
         if ( grabIPsRes )
         {
             return grabIPsRes
@@ -23,9 +20,8 @@ const grabIPs = async () => {
 const searchForIPs = async () => {
     try
     {
-        //const searchForIPsRes = await axios.get('/api/searchIPs')
         const searchForIPsRes = await sendIPC('searchForIPs')
-        console.log('commands.js searchForIPsRes:', searchForIPsRes)
+        //console.log('commands.js searchForIPsRes:', searchForIPsRes)
         if ( searchForIPsRes )
         {
             return searchForIPsRes
@@ -77,7 +73,7 @@ const disconnectFromIp = async () => {
     try 
     {
         const disConRes = await sendIPC('disconnectFromIp')
-        console.log('commands.js disConRes:', disConRes)
+        //console.log('commands.js disConRes:', disConRes)
 
         if ( disConRes )
         {
@@ -176,7 +172,7 @@ const setPlayMode = async (pid, shuffleMode = null, repeatMode = null) => {
         try
         {
             const setPlayModeRes = await sendCommand(`player/set_play_mode?pid=${pid}${repeatMode ? `&repeat=${repeatMode}` : ''}${shuffleMode ? `&shuffle=${shuffleMode}` : ''}`)
-            console.log('setPlayModeRes:', setPlayModeRes)
+            //console.log('setPlayModeRes:', setPlayModeRes)
         }
         catch(error)
         {
@@ -196,7 +192,7 @@ const getPlayState = async (pid) => {
             if ( playStateMatch )
             {
                 let playStateStrVal = playStateMatch[0]
-                console.log('init play state:', playStateStrVal)
+                //console.log('init play state:', playStateStrVal)
         
                 if ( playStateStrVal === 'unknown' )
                 {

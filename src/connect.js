@@ -53,10 +53,12 @@ const sendCmd = async (cmd) => {
     if ( cmdInProcess )
     {
         const isReady = await cmdInProcess
+        /*
         if ( isReady )
         {
             console.log(`Ready for ${cmd}`)
         }
+        */
     }
 
     cmdInProcess = new Promise(async (resolve, reject) => {

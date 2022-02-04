@@ -2,10 +2,16 @@ const { app, BrowserWindow } = require('electron');
 const path = require('path')
 const { fork } = require('child_process')
 
+if ( process.env.NODE_ENV === 'development' )
+{
+    require('electron-reload')(__dirname, {
+        electron: path.join(__dirname, 'node_modules', 'electron', 'dist', 'electron.exe')
+    })
+}
+
 const createServerProcess = () => {
     // stdio inherit means reuse the fds from main process
     // so that console logging goes back to main process terminal
-    // express: fork('./src/server.js', {stdio: 'inherit'});
     fork(path.join(__dirname, 'src/server-ipc.js'))
 }
 
@@ -18,7 +24,15 @@ const createWindow = () => {
             preload: path.join(__dirname, 'src/client-preload.js')
         }
     });
-    win.loadFile(path.join(__dirname, 'dist/index.html'))
+
+    if ( process.env.NODE_ENV === 'development' )
+    {
+        win.loadURL('http://localhost:3000')
+    }
+    else
+    {
+        win.loadFile(path.join(__dirname, 'dist/index.html'))
+    }
 }
 
 app.whenReady().then(() => {

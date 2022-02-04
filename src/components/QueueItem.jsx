@@ -12,7 +12,10 @@ const StyledItemDiv = styled.div`
     width: 100%;
     padding-left: 55px;
 
-    background-color: ${props => props.isDragging || props.isSelected ? 'rgb(255, 200, 200)' : 'white'};
+    background-color: ${props => props.isDragging || props.isSelected ? 'rgb(155, 100, 100)' : 'rgb(75,75,75)'};
+    & * {
+        background-color: ${props => props.isDragging || props.isSelected ? 'rgb(155, 100, 100)' : 'rgb(75,75,75)'};
+    }
     opacity: ${props => props.isGhosting ? '0.2' : '1' };
     border-bottom: ${props => props.isDragging ? '0' : '1px solid rgba(0,0,0,0.45)'};
     border-radius: 4px;
@@ -56,7 +59,7 @@ const QueueItem = ({ item, index, handleItemDblClick, handleSelectItem, isSelect
                     selectionCount={selectionCount}
                 >
                     <div className='queueItemWrapper'>
-                        <div style={{display: 'grid', gridColumn: '1/2', gridTemplateRows: 'max-content max-content', lineHeight: '20px', opacity: '0.75', fontWeight: '400', overflow: 'hidden'}}>
+                        <div style={{display: 'grid', gridColumn: '1/2', gridTemplateRows: 'max-content max-content', lineHeight: '20px', fontWeight: '400', overflow: 'hidden'}}>
                             <span style={{display: 'grid', gridRow: '1/2', width: 'max-content', fontSize: 'large', fontWeight: '500'}}>{(item.album) ? `${item.album}` : null}</span>
                             <span style={{display: 'grid', gridRow: '2/3', width: 'max-content'}}>{(item.artist) ? `${item.artist}` : null}</span>
                         </div>

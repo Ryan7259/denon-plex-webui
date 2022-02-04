@@ -18,7 +18,11 @@ const StyledCurrentItemDiv = styled.div`
     opacity: ${props => props.isGhosting ? '0.2' : '1' };
     border-bottom: ${props => props.isDragging ? '0' : '1px solid rgba(0,0,0,0.45)'};
     border-radius: 4px;
-    background-color: ${props => props.isDragging || props.isSelected ? 'rgb(255, 200, 200)' : 'white'};
+
+    background-color: ${props => props.isDragging || props.isSelected ? 'rgb(155, 100, 100)' : 'rgb(75,75,75)'};
+    & * {
+        background-color: ${props => props.isDragging || props.isSelected ? 'rgb(155, 100, 100)' : 'rgb(75,75,75)'};
+    }
 
     font-weight: 500;
     user-select: none;
@@ -38,7 +42,7 @@ const DragCountDiv = styled.div`
     
     color: whitesmoke;
     font-size: larger;
-    background-color: rgb(255,120,120);
+    background-color: rgb(155,20,20);
     text-shadow: 2px 2px rgba(0,0,0,0.25);
 `
 const CurrentQueueItem = ({ item, index, handleSelectItem, isSelected, isGhosting, selectionCount }) => 
@@ -60,17 +64,17 @@ const CurrentQueueItem = ({ item, index, handleSelectItem, isSelected, isGhostin
                 >
                     <div className='queueItemWrapper currentlyPlaying' style={{gridTemplateColumns: '25px minmax(150px, 350px) minmax(325px, 500px)'}}>
                         <svg style={{display: 'grid', gridRow: '1/2', width: '25px'}}>
-                            <g style={{opacity: currPlayState === playerStates.playMode.playing ? '0.8' : '0' }}>
+                            <g style={{opacity: currPlayState === playerStates.playMode.playing ? '1' : '0' }}>
                                 <path
                                     d='M 0,0 L 0,25 L 25,12.5 z'
                                 />
                             </g>
-                            <g style={{opacity: currPlayState !== playerStates.playMode.playing ? '0.8' : '0' }}>
+                            <g style={{opacity: currPlayState !== playerStates.playMode.playing ? '1' : '0' }}>
                                 <rect x='0' y='0' width='10' height='25'/>
                                 <rect x='15' y='0' width='10' height='25'/>
                             </g>
                         </svg>
-                        <div style={{display: 'grid', gridColumn: '2/3', gridTemplateRows: 'max-content max-content', lineHeight: '20px', opacity: '0.75', fontWeight: '400', overflow: 'hidden'}}>
+                        <div style={{display: 'grid', gridColumn: '2/3', gridTemplateRows: 'max-content max-content', lineHeight: '20px', fontWeight: '400', overflow: 'hidden'}}>
                             <span style={{display: 'grid', gridRow: '1/2', width: 'max-content',fontSize: 'large', fontWeight: '500'}}>{(item.album) ? `${item.album}` : null}</span>
                             <span style={{display: 'grid', gridRow: '2/3', width: 'max-content'}}>{(item.artist) ? `${item.artist}` : null}</span>
                         </div>
@@ -78,7 +82,7 @@ const CurrentQueueItem = ({ item, index, handleSelectItem, isSelected, isGhostin
                             <span style={{display: 'grid', gridColumn: '1/2'}}>
                                 {(item.name) ? item.name: item.song}
                             </span>
-                            <span style={{display: 'grid', gridColumn: '2/3', fontWeight: '400', opacity: '0.75'}}>
+                            <span style={{display: 'grid', gridColumn: '2/3', fontWeight: '400'}}>
                                 {duration.total > 0 ? `${convertTime(duration.progress)}/${convertTime(duration.total)}` : ''}
                             </span>
                         </div>

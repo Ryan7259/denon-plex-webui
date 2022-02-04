@@ -33,14 +33,7 @@ const findImg = async (containerName, clientIP) => {
     catch(error)
     {
         console.log('findImg caught error:', error)
-        if ( error.response.status && error.response.status === 401 )
-        {
-            return {error: 'Failed getting album art! Your IP needs to be allowed without auth on the Plex Media Server.'}
-        }
-        else
-        {
-            return {error: 'Failed getting album art! Plex Media Server may be down.'}
-        }
+        return {error: 'Failed getting album art!'}
     }
   }
 

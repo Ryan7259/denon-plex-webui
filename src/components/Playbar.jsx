@@ -30,13 +30,13 @@ const StyledAlbumArtDiv = styled.div`
     display: grid;
     grid-column: 1 / 2;
     grid-row: 1 / 3;
-    border: 0.5px solid rgba(0,0,0,0.5);
+    border: 0.5px solid rgb(70,70,70);;
     border-radius: 4px;
     user-select: none;
 `
 
 const StyledControlDiv = styled.div`
-    border: 0.5px solid rgba(0,0,0,0.5);
+    border: 0.5px solid rgb(70,70,70);;
     border-radius: 4px;
     display: grid;
     grid-column: 2 / 3;
@@ -81,7 +81,7 @@ const StyledVolDiv = styled.div`
     align-items: center;
     justify-items: center;
 
-    border: 0.5px solid rgba(0,0,0,0.5);
+    border: 0.5px solid rgb(70,70,70);;
     border-radius: 4px;
 
     & rect:hover {
@@ -600,8 +600,8 @@ export const Playbar = () => {
                 }}>
                     <svg viewBox='0 0 150 150'>
                         <g style={{
-                            fill: repeatState !== playerStates.repeatMode.repeatOff ? 'rgba(255,0,90,0.75)' : 'rgba(0,0,0,0.2)',
-                            stroke: repeatState !== playerStates.repeatMode.repeatOff ? 'rgba(255,0,90,0.75)' : 'black',
+                            fill: repeatState !== playerStates.repeatMode.repeatOff ? 'rgba(255,0,90,0.75)' : 'rgba(75,75,75,0.5)',
+                            stroke: repeatState !== playerStates.repeatMode.repeatOff ? 'rgba(255,0,90,0.75)' : 'rgba(75,75,75,0.5)',
                             strokeWidth: repeatState !== playerStates.repeatMode.repeatOff ? '3' : '1.5',
                         }}>
                             <path d='M 90,25 L 90,5 L 125,25 L 90,45 z'/>
@@ -609,7 +609,7 @@ export const Playbar = () => {
                         </g>
                         <g style={{
                             fill: 'none',
-                            stroke: repeatState !== playerStates.repeatMode.repeatOff ? 'rgba(255,0,90,0.75)' : 'black',
+                            stroke: repeatState !== playerStates.repeatMode.repeatOff ? 'rgba(255,0,90,0.75)' : 'rgba(75,75,75,0.5)',
                             strokeWidth: repeatState !== playerStates.repeatMode.repeatOff ? '3' : '1.5',
                         }}>
                             <path d='M 20,110 Q 0 40 , 50 25'/>
@@ -632,7 +632,7 @@ export const Playbar = () => {
                     gridRow: '1/2',
                 }}>
                     <svg viewBox='0 0 150 150'>
-                        <path fill='rgba(0,0,0,0.2)' stroke='black' strokeWidth='1.5'
+                        <path fill='rgba(75,75,75,0.5)' stroke='black' strokeWidth='1.5'
                             d='M 150,0 L 150,150 L 20,78
                             L 20,150 L 0,150 L 0,0 L 20,0 L 20,72 z'
                         />
@@ -644,8 +644,8 @@ export const Playbar = () => {
                     gridRow: '1/2',
                 }}>
                     <svg viewBox='0 0 150 150' style={{
-                        fill: 'rgba(0,0,0,0.2)',
-                        stroke: 'black',
+                        fill: 'rgba(75,75,75,0.5)',
+                        stroke: 'rgba(75,75,75,0.5)',
                         strokeWidth: '1.5px',
                     }}>
                         <g style={{ display: playState === playerStates.playMode.playing ? 'grid' : 'none'}}>
@@ -653,7 +653,7 @@ export const Playbar = () => {
                             <rect x='100' y='0' width='50' height='150'/>
                         </g>
                         <g style={{ display: (playState === playerStates.playMode.paused || playState === playerStates.playMode.stopped) ? 'grid' : 'none'}}>
-                            <path fill='rgba(0,0,0,0.2)' stroke='black' strokeWidth='1.5'
+                            <path fill='rgba(75,75,75,0.5)' stroke='rgba(75,75,75,0.5)' strokeWidth='1.5'
                                 d='M 0,0 L 0,150 L 150,75 z'
                             />
                         </g>
@@ -665,7 +665,7 @@ export const Playbar = () => {
                     gridRow: '1/2'
                 }}>
                     <svg viewBox='0 0 150 150'>
-                        <path fill='rgba(0,0,0,0.2)' stroke='black' strokeWidth='1.5'
+                        <path fill='rgba(75,75,75,0.5)' stroke='rgba(75,75,75,0.5)' strokeWidth='1.5'
                             d='M 0,0 L 0,150 L 130,78
                             L 130,150 L 150,150 L 150,0 L 130,0 L 130,72 z'
                         />
@@ -677,8 +677,8 @@ export const Playbar = () => {
                         gridRow: '1/2',
                     }}>
                     <svg viewBox='0 0 150 150' style={{
-                        fill: shuffleState === playerStates.shuffleMode.shuffleOn ? 'rgba(255,0,90,0.75)' : 'rgba(0,0,0,0.2)',
-                        stroke: shuffleState === playerStates.shuffleMode.shuffleOn ? 'rgba(255,0,90,0.75)' : 'black',
+                        fill: shuffleState === playerStates.shuffleMode.shuffleOn ? 'rgba(255,0,90,0.75)' : 'rgba(75,75,75,0.5)',
+                        stroke: shuffleState === playerStates.shuffleMode.shuffleOn ? 'rgba(255,0,90,0.75)' : 'rgba(75,75,75,0.5)',
                         strokeWidth: shuffleState === playerStates.shuffleMode.shuffleOn ? '3' : '1.5',
                     }}>
                         <g transform='rotate(45, 75, 75)'>
@@ -728,7 +728,7 @@ export const Playbar = () => {
                         <line 
                             strokeLinecap="round" 
                             strokeWidth='10px' 
-                            stroke='rgba(0,0,0,0.1)' x1='0' y1='100%' x2='100%' y2='25%'
+                            stroke='rgb(50,50,50)' x1='0' y1='100%' x2='100%' y2='25%'
                         />
                         <line 
                             strokeLinecap="round" 
@@ -736,7 +736,7 @@ export const Playbar = () => {
                             stroke='rgba(0,0,0,1)' x1='0' y1='100%' x2='100%' y2='25%'
                         />
                         <rect 
-                            fill='rgb(200,200,200)' 
+                            fill='rgb(75,75,75)' 
                             stroke='black' 
                             strokeWidth='0.25' 
                             x={`${volume.x}`} y='30' height='120' width='30'
