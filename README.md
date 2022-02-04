@@ -1,15 +1,13 @@
 # Denon Plex Web UI
 
-This is a React and express.js server app that acts as an intuitive UI to browse for local Plex music and stream it to a HEOS device like a Denon AV receiver/player. The React app uses the express server to send and receive JSON requests formatted to the HEOS CLI protocol.
-
-This is only a Node.js localhost app that can be started by npm install + clicking the startAppAndServer.bat file.
+An easy to use app to browse for local Plex music and stream it to a HEOS device like a Denon AV receiver/player. It is built with React/Electron and uses IPC sockets to handle communication with the Denon device's HEOS API. 
 
 ## Features:
 - Searching and connecting to a HEOS device
 - Browsing for media local DLNA servers (mainly written for Plex) to add to the player queue
 - Web UI to control player functions like play modes, play states, volume control, etc.
 - Queueing songs, changing queue order, saving/editing/loading playlists, etc.
-- Server sent events to sync up the interface with what the actual player is doing
+- Uses IPC sockets to communicate events to sync up the interface with what the actual player is doing
 
 
 ## Extras:
