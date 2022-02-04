@@ -9,10 +9,10 @@
     "dev": "concurrently \"vite\" \"NODE_ENV=development electron .\"",
     "build": "vite build",
     "preview": "vite preview",
-    "dist": "electron-builder"
+    "dist": "vite build && electron-builder"
   },
   "build": {
-    "appId": "com.denonplex.webapp",
+    "appId": "com.denonPlex.webApp",
     "files": [
       "dist/**",
       "main.js",
@@ -22,14 +22,14 @@
       "src/server-ipc.js"
     ],
     "directories": {
-      "output": "release"
+      "output": "build"
     },
-    "asar": true,
     "win": {
-      "target": ["portable"]
+      "target": "portable",
+      "icon": "icon.png"
     },
     "portable": {
-      "artifactName": "denon_plex_app.exe"
+      "artifactName": "DenonPlexApp.exe"
     }
   },
   "dependencies": {
