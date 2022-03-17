@@ -1,6 +1,6 @@
 # Denon Plex Web UI
 
-An easy to use app to browse for local Plex music and stream it to a HEOS device like a Denon AV receiver/player. It is built with React/Rust/Tauri and uses IPC sockets to handle communication with the Denon device's HEOS API. I chose to port it to Tauri to both gain more experience with Rust and because WebView2 has a lower memory usage compared to Electron.
+An easy to use app to browse for local Plex music and stream it to a HEOS device like a Denon AV receiver/player. It is built with React/Rust/Tauri and uses IPC sockets to handle communication with the Denon device's HEOS API. I chose to port it to Tauri to both gain more experience with Rust and because WebView2 has lower memory usage compared to Electron.
 
 ## Features:
 - Searching and connecting to a HEOS device
