@@ -1,27 +1,11 @@
 import playerStates from '../utils/playerStates'
-import { sendIPC } from '../client-ipc'
-
-const grabIPs = async () => {
-    try
-    {
-        const grabIPsRes = await sendIPC('grabIPs')
-        //console.log('grabIPsRes:', grabIPsRes)
-        if ( grabIPsRes )
-        {
-            return grabIPsRes
-        }
-    }
-    catch (error)
-    {
-        console.log('grabIPs command error:', error)
-    }
-}
+import {find_denon_devices, send_command, connect_to_device, disconnect_from_device} from '../tauri-handler'
 
 const searchForIPs = async () => {
     try
     {
-        const searchForIPsRes = await sendIPC('searchForIPs')
-        //console.log('commands.js searchForIPsRes:', searchForIPsRes)
+        const searchForIPsRes = await find_denon_devices()
+        console.log('commands.js searchForIPsRes:', searchForIPsRes)
         if ( searchForIPsRes )
         {
             return searchForIPsRes
@@ -40,7 +24,7 @@ const sendCommand = async (command) => {
     */
     try 
     {
-        const sendCmdRes = await sendIPC('sendCmd', command)
+        const sendCmdRes = await send_command(command)
         console.log('commands.js sendCmdRes:', sendCmdRes)
         if ( sendCmdRes && sendCmdRes.heos.result === 'success' )
         {
@@ -53,36 +37,24 @@ const sendCommand = async (command) => {
     }
 }
 
-const connectToIp = async (address) => {
+const connectToDevice = async (deviceIp) => {
     try 
     {
-        const conRes = await sendIPC('connectToIp', address)
-        //console.log(`commands.js connected to ${address}`)
-        //console.log('commands.js connectToIp conRes:', conRes)
+        const conRes = await connect_to_device(deviceIp);
+        console.log(`commands.js connected to ${deviceIp}`)
+        console.log('commands.js connectToDevice conRes:', conRes)
         if ( conRes )
         {
             return conRes
         }
     }
     catch (error) {
-        console.log('commands.js connectToIP error:', error)
+        console.log('commands.js connectToDevice error:', error)
     }
 }
 
-const disconnectFromIp = async () => {
-    try 
-    {
-        const disConRes = await sendIPC('disconnectFromIp')
-        //console.log('commands.js disConRes:', disConRes)
-
-        if ( disConRes )
-        {
-            return disConRes
-        }
-    }
-    catch (error) {
-        console.log('command.js disconnectFromIp error:', error)
-    }
+const disconnectFromDevice = () => {
+    disconnect_from_device();
 }
 
 const getCurrentMedia = async (pid) => {
@@ -255,11 +227,10 @@ const clearQueue = async (pid) => {
 }
 
 export default {
-    grabIPs,
     searchForIPs,
     sendCommand,
-    connectToIp,
-    disconnectFromIp,
+    connectToDevice,
+    disconnectFromDevice,
     getCurrentMedia,
     getVolume,
     setVolume,

@@ -2,40 +2,37 @@ import { useState } from 'react'
 import Containers from './Containers'
 import commandService from '../services/commands'
 import { Button } from 'react-bootstrap'
-import { clearInfo, setPid, setReadyForIPCEvents} from '../reducers/infoSlice'
+import { clearInfo, setPid, setReadyForEvents} from '../reducers/infoSlice'
 import { setNotification } from '../reducers/notificationSlice'
 import { useSelector, useDispatch } from 'react-redux'
-import { clearIPCEventHandler } from '../client-ipc'
+import { clearEventHandler } from '../tauri-handler'
 
 const Connection = ({ ips, handleSearch, clearSearchHistory }) => {
     const [ connectedAddress, setConnectedAddress ] = useState('')
     const [ isConnected, setConnected ] = useState(false)
 
     const dispatch = useDispatch()
-    const readyForIPCEvents = useSelector(state => state.info.readyForIPCEvents)
+    const readyForEvents = useSelector(state => state.info.readyForEvents)
 
-    const handleConnect = async (address) => {
-        const conRes = await commandService.connectToIp(address)
+    const handleConnect = async (deviceIp) => {
+        const conRes = await commandService.connectToDevice(deviceIp)
         //console.log('conRes:', conRes)
-        if ( conRes && conRes.success )
+        if ( conRes )
         {
-            setConnectedAddress(address)
+            setConnectedAddress(deviceIp)
             setConnected(true)
             
             const getPlayersRes = await commandService.sendCommand('player/get_players')
             //console.log('getPlayersRes:', getPlayersRes)
             if ( getPlayersRes )
             {
-                const newPid = getPlayersRes.payload.find(players => players.ip === address).pid
+                const newPid = getPlayersRes.payload.find(players => players.ip === deviceIp).pid
                 dispatch(setPid(newPid))
             }
         }
-        else
+        else 
         {
-            if ( conRes )
-            {
-                console.log('Connection.js handleConnect error:', conRes)
-            }
+            console.log('Connection.js handleConnect error!')
             dispatch(setNotification('Failed to connect to player...'))
         }
     }
@@ -46,27 +43,19 @@ const Connection = ({ ips, handleSearch, clearSearchHistory }) => {
             return
         }
 
-        if ( readyForIPCEvents )
+        if ( readyForEvents )
         {
-            clearIPCEventHandler()
-            dispatch(setReadyForIPCEvents(false))
-            console.log('Ended SSE connection!')
-        }
-        const disConRes = await commandService.disconnectFromIp()
-        if ( disConRes )
-        {
-            setConnectedAddress('')
-            setConnected(false)
-            dispatch(clearInfo())
-        }
-        else
-        {
-            console.log('Failed to close connection to server and player...')
-            if ( disConRes )
+            if ( clearEventHandler )
             {
-                console.log('disconnect error:', disConRes)
+                clearEventHandler()
             }
+            dispatch(setReadyForEvents(false))
+            console.log('Ended event handler connection!')
         }
+        commandService.disconnectFromDevice()
+        setConnectedAddress('')
+        setConnected(false)
+        dispatch(clearInfo())
     }
 
     return (!isConnected)

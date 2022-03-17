@@ -2,8 +2,8 @@ import { useState, useEffect, useRef } from 'react'
 import { useSelector, useDispatch, shallowEqual } from 'react-redux'
 import { setCurrentItem, setPlayState, setDuration, setBlockEventUpdates } from '../reducers/playerSlice'
 import { setQueue } from '../reducers/queueSlice'
-import { setReadyForIPCEvents } from '../reducers/infoSlice'
-import { setIPCEventHandler } from '../client-ipc'
+import { setReadyForEvents } from '../reducers/infoSlice'
+import { setEventHandler } from '../tauri-handler'
 import commandService from '../services/commands'
 import findImg from '../utils/findImg'
 import playerStates from '../utils/playerStates'
@@ -302,7 +302,7 @@ export const Playbar = () => {
             }
 
             // once events are registered again, setup server side events for detecting changes in queue
-            dispatch(setReadyForIPCEvents(true))
+            dispatch(setReadyForEvents(true))
             console.log('Set up event source!')
         }
 
@@ -336,7 +336,7 @@ export const Playbar = () => {
             return
         }
 
-        //console.log('IPC event recv\'d:', e)
+        //console.log('Tauri event recv\'d:', e)
         const evtObj = e.heos
         if ( evtObj.command === eventTypes.nowPlayingChanged )
         {
@@ -455,11 +455,11 @@ export const Playbar = () => {
         }
     } 
     useEffect(() => {
-        if ( info.readyForIPCEvents && info.pid )
+        if ( info.readyForEvents && info.pid )
         {
-            setIPCEventHandler(eventHandler)
+            setEventHandler(eventHandler)
         }            
-    }, [info.readyForIPCEvents])
+    }, [info.readyForEvents])
 
     const startDrag = (e) => {
         // stop defaults, stop events from here
@@ -473,7 +473,10 @@ export const Playbar = () => {
         }
 
         // prevent event updating from volume change SSEs
-        dispatch(setBlockEventUpdates(true))
+        if ( info.pid )
+        {
+            dispatch(setBlockEventUpdates(true))
+        }
 
         // onMouseDown event listener applied to parent div, currentTarget = elem that attached evt listener
         // playbar div > [svg] > [line,line,rect]
@@ -525,10 +528,9 @@ export const Playbar = () => {
             if ( info.pid )
             {
                 commandService.setVolume(info.pid, newVolVal)
+                // turn back on event updating from volume change SSEs
+                dispatch(setBlockEventUpdates(false))
             }
-
-            // turn back on event updating from volume change SSEs
-            dispatch(setBlockEventUpdates(false))
         }
 
         // if user clicked a position without moving, vol bar won't move, so just move it to initial click pos
@@ -542,7 +544,12 @@ export const Playbar = () => {
 
     const getAlbumArt = async () => {
         if ( info.pid && info.clientIP )
-        {
+        {   
+            setAlbumArt({
+                ...albumArt,
+                [currentItem.album]: currentItem.image_url                 
+            })
+            /*
             const findImgRes = await findImg(currentItem.album, info.clientIP)
             //console.log('findImgRes:', findImgRes)
             if ( findImgRes && !findImgRes.error )
@@ -560,7 +567,7 @@ export const Playbar = () => {
             else
             {
                 dispatch('Failed to find album art!')
-            }
+            }*/
         }
     }
 

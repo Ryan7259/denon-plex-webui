@@ -25,8 +25,28 @@ const StyledPlayableItemDiv = styled.div`
 
 
 const PlayableContainer = ({ container, items }) => {
+    container.image_url = items[0].image_url
     const [ clickedItems, setClickedItems ] = useState(null)
     
+    useEffect(() => {
+        const hideScroll = (e) => {
+            if ( !e.target.classList.contains('clickableItem') )
+            {
+                setClickedItems(null)
+            }
+        }
+        document.addEventListener('click', hideScroll);
+        return () => {
+            document.removeEventListener('click', hideScroll)
+        }
+    }, [])
+
+    const clickHandler = (e) => {
+        if ( e.target.classList.contains('clickableItem') )
+        {
+            setClickedItems([JSON.parse(e.target.value)])
+        }
+    }
     return (
         <StyledPlayableContainerDiv>
             <ContextMenu>
@@ -40,7 +60,7 @@ const PlayableContainer = ({ container, items }) => {
                 maxWidth: '256px',
                 width: '100%', 
                 height: 'auto'
-            }} fluid={true} src={container.image_url} />
+            }} src={container.image_url} />
             <div style={{display: 'flex', 
                 flexDirection:'column', 
                 padding: '15px', 
@@ -55,10 +75,10 @@ const PlayableContainer = ({ container, items }) => {
                 gridRow: '2 / 3', 
                 gridColumn: '1 / 3'}}
             >
-                <Button variant='success' onClick={() => setClickedItems(items)} className='clickableItem'>Play Album</Button>
+                <Button variant='success' onClick={() => setClickedItems(items)} className='clickableItem clickableAlbum'>Play Album</Button>
             </div>
-            <StyledPlayableItemsListDiv style={{overflow: clickedItems ? 'hidden' : 'auto'}}>
-                {items.map(item => <StyledPlayableItemDiv key={item.mid}><Button onClick={() => setClickedItems([item])} className='clickableItem'>{item.name}</Button></StyledPlayableItemDiv>)}
+            <StyledPlayableItemsListDiv onClick={clickHandler} style={{overflow: clickedItems ? 'hidden' : 'overlay'}}>
+                {items.map(item => <StyledPlayableItemDiv key={item.mid}><Button value={JSON.stringify(item)} className='clickableItem'>{item.name}</Button></StyledPlayableItemDiv>)}
             </StyledPlayableItemsListDiv>
         </StyledPlayableContainerDiv>
     )

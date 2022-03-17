@@ -44,7 +44,7 @@ const Containers = () => {
     else
     {
       const containerRes = await commandService.sendCommand(command)
-      //console.log('containerRes:', containerRes
+      console.log('containerRes:', containerRes);
 
       // failure result
       if (!containerRes || containerRes.heos.result === 'fail')
@@ -72,13 +72,15 @@ const Containers = () => {
           }
         }
 
-        //console.log('payloadObj:', payloadObj)
+        console.log('payloadObj:', payloadObj)
 
         if (playCont)
         {
           //console.log('findImg name:', playCont.name)
+          /*
           if ( info.clientIP )
           {
+            
             const findImgRes = await findImg(playCont.name, info.clientIP)
             if ( findImgRes && !findImgRes.error )
             {
@@ -90,6 +92,7 @@ const Containers = () => {
               dispatch(setNotification('Failed to get album art!'))
             }
           }
+          */
           setPlayableContainer(playCont)
           setPlayableContainers(payloadObj)
         }

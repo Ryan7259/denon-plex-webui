@@ -1,4 +1,4 @@
-import axios from 'axios'
+import { fetch } from "@tauri-apps/api/http"
 
 const findImg = async (containerName, clientIP) => {
     try
@@ -6,10 +6,8 @@ const findImg = async (containerName, clientIP) => {
         // encode special chars for HTTP request, also need to remove year suffix to find album properly
         //[\s\S]+-\s
         const encodedContentName = encodeURIComponent(decodeURIComponent(containerName).replace(/[\s\S]+-\s/, '').replace(/\s(\(\d{4}\))$/, ''))
-        const findImgRes = await axios({
-            method: 'get',
-            url: `/search?query=${encodedContentName}`,
-            baseURL: clientIP,
+        const findImgRes = await fetch(`${clientIP}/search?query=${encodedContentName}`, {
+            method: 'GET',
         })
 
         if ( findImgRes.data.MediaContainer.Metadata[0] )
